@@ -4,16 +4,22 @@ import { HDRLoader } from 'https://cdn.jsdelivr.net/npm/three@0.180.0/examples/j
 
 const loader = new GLTFLoader();
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const environmentRequest = new HDRLoader()
-  .loadAsync(new URL('./assets/models/studio_small_03_1k.hdr', import.meta.url).href)
-  .then((texture) => {
-    texture.mapping = THREE.EquirectangularReflectionMapping;
-    return texture;
-  })
-  .catch((error) => {
-    console.error('ÉCLAT ingredient studio lighting could not be loaded.', error);
-    return null;
-  });
+
+function loadEnvironment() {
+  if (!window.__eclatEnvironmentRequest) {
+    window.__eclatEnvironmentRequest = new HDRLoader()
+      .loadAsync(new URL('./assets/models/studio_small_03_1k.hdr', import.meta.url).href)
+      .then((texture) => {
+        texture.mapping = THREE.EquirectangularReflectionMapping;
+        return texture;
+      })
+      .catch((error) => {
+        console.error('ÉCLAT studio lighting could not be loaded.', error);
+        return null;
+      });
+  }
+  return window.__eclatEnvironmentRequest;
+}
 
 function disposeAsset(gltf) {
   const geometries = new Set();
@@ -50,6 +56,7 @@ class IngredientViewer {
     this.pointerId = null;
     this.lastMoveTime = 0;
     this.lastFrameTime = 0;
+    this.paused = false;
     this.loadId = 0;
     this.disposed = false;
     this.onPointerDown = this.onPointerDown.bind(this);
@@ -63,7 +70,7 @@ class IngredientViewer {
 
   async start() {
     try {
-      const [environment] = await Promise.all([environmentRequest]);
+      const environment = await loadEnvironment();
       if (this.disposed) return;
 
       const width = Math.max(1, this.host.clientWidth);
@@ -127,7 +134,7 @@ class IngredientViewer {
       this.resizeObserver = new ResizeObserver(() => this.resize());
       this.resizeObserver.observe(this.host);
       await this.setFragrance(this.key);
-      if (!this.disposed) this.frame = requestAnimationFrame(this.render);
+      if (!this.disposed && !this.paused) this.frame = requestAnimationFrame(this.render);
     } catch (error) {
       this.dispose();
       console.error(`ÉCLAT ${this.key} ingredient 3D could not be displayed; retaining its image fallback.`, error);
@@ -296,8 +303,22 @@ class IngredientViewer {
     this.renderer.setSize(width, height);
   }
 
+  pause() {
+    if (this.disposed || this.paused) return;
+    this.paused = true;
+    cancelAnimationFrame(this.frame);
+  }
+
+  resume() {
+    if (this.disposed || !this.paused) return;
+    this.paused = false;
+    if (!this.renderer) return;
+    this.lastFrameTime = 0;
+    this.frame = requestAnimationFrame(this.render);
+  }
+
   render(time) {
-    if (this.disposed || !this.renderer) return;
+    if (this.disposed || this.paused || !this.renderer) return;
     const elapsed = this.lastFrameTime
       ? Math.min((time - this.lastFrameTime) / 1000, 0.05)
       : 1 / 60;
@@ -370,33 +391,41 @@ function initIngredientViewers() {
   const hosts = document.querySelectorAll('.ingredient-stage[data-fragrance]');
   if (!hosts.length || !('IntersectionObserver' in window) || !('ResizeObserver' in window)) return;
 
+  const states = new Map();
+  const startViewer = (state) => {
+    if (state.instance) return;
+    state.instance = new IngredientViewer(state.host, state.host.querySelector('.ingredient-fallback'), state.key);
+    state.instance.paused = !state.visible;
+    state.instance.start();
+  };
+  const proximityObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) startViewer(states.get(entry.target));
+    });
+  }, { rootMargin: '320px 0px', threshold: 0.01 });
+  const visibilityObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      const state = states.get(entry.target);
+      if (!state) return;
+      state.visible = entry.isIntersecting;
+      if (state.visible) {
+        startViewer(state);
+        state.instance?.resume();
+      } else {
+        state.instance?.pause();
+      }
+    });
+  }, { threshold: 0.05 });
+
   hosts.forEach((host) => {
-    const state = { key: host.dataset.fragrance, instance: null, visible: false, stopTimer: 0 };
+    const state = { host, key: host.dataset.fragrance, instance: null, visible: false };
+    states.set(host, state);
     host.addEventListener('ingredientchange', () => {
       state.key = host.dataset.fragrance;
       state.instance?.setFragrance(state.key);
     });
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          clearTimeout(state.stopTimer);
-          state.visible = true;
-          if (!state.instance) {
-            state.instance = new IngredientViewer(host, host.querySelector('.ingredient-fallback'), state.key);
-            state.instance.start();
-          }
-        } else {
-          state.visible = false;
-          state.stopTimer = setTimeout(() => {
-            if (state.visible || !state.instance) return;
-            state.instance.dispose();
-            state.instance = null;
-          }, 1200);
-        }
-      });
-    }, { rootMargin: '120px 0px', threshold: 0.05 });
-    observer.observe(host);
+    proximityObserver.observe(host);
+    visibilityObserver.observe(host);
   });
 }
 

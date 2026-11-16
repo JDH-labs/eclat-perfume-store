@@ -60,16 +60,22 @@ const fragrances = {
 const loader = new GLTFLoader();
 const modelRequests = new Map();
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const environmentRequest = new HDRLoader()
-  .loadAsync(new URL('./assets/models/studio_small_03_1k.hdr', import.meta.url).href)
-  .then((texture) => {
-    texture.mapping = THREE.EquirectangularReflectionMapping;
-    return texture;
-  })
-  .catch((error) => {
-    console.error('ÉCLAT bottle studio lighting could not be loaded.', error);
-    return null;
-  });
+
+function loadEnvironment() {
+  if (!window.__eclatEnvironmentRequest) {
+    window.__eclatEnvironmentRequest = new HDRLoader()
+      .loadAsync(new URL('./assets/models/studio_small_03_1k.hdr', import.meta.url).href)
+      .then((texture) => {
+        texture.mapping = THREE.EquirectangularReflectionMapping;
+        return texture;
+      })
+      .catch((error) => {
+        console.error('ÉCLAT studio lighting could not be loaded.', error);
+        return null;
+      });
+  }
+  return window.__eclatEnvironmentRequest;
+}
 
 function getFragranceKey(host) {
   return host.dataset.fragrance
@@ -556,7 +562,7 @@ class BottleViewer {
     try {
       const [gltf, environment] = await Promise.all([
         loadModel(this.key),
-        environmentRequest
+        loadEnvironment()
       ]);
       if (this.disposed) return;
 
@@ -1159,72 +1165,55 @@ function initBottleViewers() {
     '.bottle[data-fragrance], .philosophy-bottle[data-fragrance], .card-visual, .stage-visual, .shop-card-visual'
   );
   const viewers = new Map();
-  const observer = new IntersectionObserver((entries) => {
+  const startViewer = (viewer) => {
+    if (viewer.instance) return;
+    viewer.instance = new BottleViewer(viewer.host, viewer.fallback, viewer.key);
+    viewer.instance.paused = !viewer.visible;
+    viewer.instance.start();
+  };
+  const proximityObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
-      const host = entry.target;
-      const viewer = viewers.get(host);
-      if (entry.isIntersecting) {
-        if (viewer) {
-          clearTimeout(viewer.stopTimer);
-          viewer.visible = true;
-          if (!viewer.instance) {
-            viewer.instance = new BottleViewer(host, viewer.fallback, viewer.key);
-            viewer.instance.start();
-          } else {
-            viewer.instance.resume();
-          }
-          return;
-        }
-
-        const key = getFragranceKey(host);
-        const fallback = host.querySelector('img');
-        if (!fragrances[key] || !fallback) {
-          console.error('ÉCLAT 3D bottle is missing its fragrance model or fallback image.', host);
-          return;
-        }
-
-        const entryState = {
-          fallback,
-          key,
-          visible: true,
-          instance: new BottleViewer(host, fallback, key)
-        };
-        viewers.set(host, entryState);
-        host.addEventListener('bottlechange', () => {
-          const currentViewer = viewers.get(host);
-          const nextKey = getFragranceKey(host);
-          if (!currentViewer || currentViewer.key === nextKey || !fragrances[nextKey]) return;
-
-          currentViewer.instance?.dispose();
-          clearTimeout(currentViewer.stopTimer);
-          currentViewer.key = nextKey;
-          currentViewer.instance = currentViewer.visible
-            ? new BottleViewer(host, currentViewer.fallback, nextKey)
-            : null;
-          currentViewer.instance?.start();
-        });
-        entryState.instance.start();
-      } else if (viewer?.instance) {
-        viewer.visible = false;
-        if (viewer.instance.isQuietScene) {
-          viewer.instance.pause();
-          return;
-        }
-        viewer.stopTimer = setTimeout(async () => {
-          if (viewer.instance === null || viewer.visible) return;
-          const instance = viewer.instance;
-          await instance.capturePoster();
-          if (viewer.instance !== instance || viewer.visible) return;
-          instance.dispose();
-          viewer.instance = null;
-        }, 1200);
-      } else if (viewer) {
-        viewer.visible = false;
+      if (!entry.isIntersecting) return;
+      const viewer = viewers.get(entry.target);
+      if (viewer) startViewer(viewer);
+    });
+  }, { rootMargin: '320px 0px', threshold: 0.01 });
+  const visibilityObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      const viewer = viewers.get(entry.target);
+      if (!viewer) return;
+      viewer.visible = entry.isIntersecting;
+      if (viewer.visible) {
+        startViewer(viewer);
+        viewer.instance?.resume();
+      } else {
+        viewer.instance?.pause();
       }
     });
-  }, { rootMargin: '100px 0px', threshold: 0.05 });
+  }, { threshold: 0.05 });
 
-  hosts.forEach((host) => observer.observe(host));
+  hosts.forEach((host) => {
+    const key = getFragranceKey(host);
+    const fallback = host.querySelector('img');
+    if (!fragrances[key] || !fallback) {
+      console.error('ÉCLAT 3D bottle is missing its fragrance model or fallback image.', host);
+      return;
+    }
+
+    const viewer = { host, fallback, key, visible: false, instance: null };
+    viewers.set(host, viewer);
+    host.addEventListener('bottlechange', () => {
+      const nextKey = getFragranceKey(host);
+      if (viewer.key === nextKey || !fragrances[nextKey]) return;
+
+      viewer.instance?.dispose();
+      viewer.instance = null;
+      viewer.key = nextKey;
+      if (viewer.visible) startViewer(viewer);
+    });
+    proximityObserver.observe(host);
+    visibilityObserver.observe(host);
+  });
 }
 
 initBottleViewers();
