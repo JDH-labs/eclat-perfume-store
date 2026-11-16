@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="ÉCLAT — The Art of Scent. A luxury niche fragrance experience." />
+    <title>ÉCLAT — The Art of Scent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.16/dist/lenis.min.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"
+        }
+      }
+    </script>
+    <script type="module" src="bottles3d.js"></script>
+    <script type="module" src="ingredients3d.js"></script>
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-mark">
+          <span class="brand-logo">É</span>
+          <span class="brand-word">ÉCLAT</span>
+        </div>
+        <nav class="main-nav" aria-label="Главная навигация">
+          <a href="#collection">Коллекция</a>
+          <a href="#composition">Состав</a>
+          <a href="#ingredients">Ингредиенты</a>
+          <a href="#philosophy">Философия</a>
+          <a href="#boutique">Бутик</a>
+        </nav>
+        <button class="cart-toggle" type="button" aria-label="Открыть корзину" aria-controls="cartPanel" aria-expanded="false">
+          <span>Корзина</span>
+          <span class="cart-count">0</span>
+        </button>
+      </header>
+
+      <main>
+        <section class="hero" id="home">
+          <div class="hero-sheen" aria-hidden="true"></div>
+          <div class="hero-copy reveal">
+            <p class="eyebrow">Нишевая парфюмерная мастерская</p>
+            <h1>ÉCLAT</h1>
+            <p class="tagline">The Art of Scent</p>
+            <p class="hero-text">
+              Мы создаём ароматы как пространство эмоций: тёплое, глубокое и запоминающееся, где каждая нота раскрывается медленно и уверенно.
+            </p>
+            <div class="cta-row">
+              <a href="#composition" class="primary-btn">Смотреть аромат</a>
+              <a href="#boutique" class="ghost-btn">Бутик</a>
+            </div>
+          </div>
+
+          <div class="hero-visual reveal">
+            <div class="bottle-scene" aria-label="Премиум флакон духов">
+              <div class="mist mist-one"></div>
+              <div class="mist mist-two"></div>
+              <div class="orb orb-one"></div>
+              <div class="orb orb-two"></div>
+
+              <div class="bottle" id="fragranceBottle" data-fragrance="amber-noir" aria-live="polite">
+                <div class="glow"></div>
+                <img
+                  class="bottle-photo"
+                  id="heroBottleImage"
+                  src="assets/perfumes/amber-noir.png"
+                  alt="Стеклянный флакон ÉCLAT Amber Noir с янтарной парфюмерной жидкостью"
+                  decoding="async"
+                  fetchpriority="high"
+                />
+                <button class="cap-toggle" id="capToggle" type="button" aria-label="Открыть крышку флакона" aria-pressed="false">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M8 5h8v3h2v11H6V8h2zM9 3h6M10 12l2-2 2 2M12 10v5" />
+                  </svg>
+                  <span class="cap-toggle-label">Открыть крышку</span>
+                </button>
+                <button class="spray-button" id="sprayButton" type="button" aria-label="Выпустить аромат">
+                  <svg viewBox="0 0 36 36" aria-hidden="true">
+                    <path d="M9 23h10a4 4 0 0 0 4-4v-5h-5V9h-5v5h-2v10a3 3 0 0 0 3 3h10" />
+                    <path d="M24 9h6M26 5h5M26 13h5" />
+                    <circle cx="32" cy="9" r=".7" />
+                  </svg>
+                </button>
+                <div class="spray-status" id="sprayStatus">АРОМАТ ВЫПУЩЕН</div>
+              </div>
+              <div class="bottle-caption" aria-hidden="true">
+                <span>01 / OBJET DE PARFUM</span>
+                <span>Проведите, чтобы повернуть · Нажмите, чтобы открыть</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="scroll-cue">Прокрутите вниз</div>
+        </section>
+
+        <section class="collection" id="collection">
+          <div class="section-heading reveal">
+            <p class="eyebrow">Коллекция</p>
+            <h2>Ароматы для редких ритуалов.</h2>
+          </div>
+
+          <div class="fragrance-grid">
+            <article class="fragrance-card active reveal" data-fragrance="amber-noir" data-color="#d97832" data-accent="#c99a61" data-image="assets/perfumes/amber-noir.png" tabindex="0">
+              <div class="card-visual amber-visual">
+                <img class="fragrance-bottle" src="assets/perfumes/amber-noir.png" alt="Флакон аромата Amber Noir" loading="lazy" decoding="async" />
+              </div>
+              <div class="card-body">
+                <div class="card-meta">
+                  <span>01</span>
+                  <span>Янтарь</span>
+                </div>
+                <h3>AMBER NOIR</h3>
+                <p>Тёплый янтарь, кедр и пряности в глубоком вечернем силуэте.</p>
+                <ul>
+                  <li>Амбра</li>
+                  <li>Ваниль</li>
+                  <li>Специи</li>
+                </ul>
+                <div class="card-bottom">
+                  <strong class="collection-price">от ₽18 000 · 50 мл</strong>
+                  <button type="button" class="view-btn">Смотреть аромат</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="fragrance-card reveal" data-fragrance="velvet-bloom" data-color="#dca985" data-accent="#f2d4c2" data-image="assets/perfumes/velvet-bloom.png" tabindex="0">
+              <div class="card-visual blush-visual">
+                <img class="fragrance-bottle" src="assets/perfumes/velvet-bloom.png" alt="Флакон аромата Velvet Bloom" loading="lazy" decoding="async" />
+              </div>
+              <div class="card-body">
+                <div class="card-meta">
+                  <span>02</span>
+                  <span>Цветы</span>
+                </div>
+                <h3>VELVET BLOOM</h3>
+                <p>Мягкие лепестки и бархатистая древесная база для утончённой романтики.</p>
+                <ul>
+                  <li>Роза</li>
+                  <li>Жасмин</li>
+                  <li>Мягкий мускус</li>
+                </ul>
+                <div class="card-bottom">
+                  <strong class="collection-price">от ₽17 000 · 50 мл</strong>
+                  <button type="button" class="view-btn">Смотреть аромат</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="fragrance-card reveal" data-fragrance="citrus-ombre" data-color="#d8a24a" data-accent="#f7d77f" data-image="assets/perfumes/citrus-ombre.png" tabindex="0">
+              <div class="card-visual citrus-visual">
+                <img class="fragrance-bottle" src="assets/perfumes/citrus-ombre.png" alt="Флакон аромата Citrus Ombre" loading="lazy" decoding="async" />
+              </div>
+              <div class="card-body">
+                <div class="card-meta">
+                  <span>03</span>
+                  <span>Цитрус</span>
+                </div>
+                <h3>CITRUS OMBRE</h3>
+                <p>Золотой бергамот и свежая цедра создают лёгкий, сверкающий аккорд.</p>
+                <ul>
+                  <li>Бергамот</li>
+                  <li>Лимон</li>
+                  <li>Ветивер</li>
+                </ul>
+                <div class="card-bottom">
+                  <strong class="collection-price">от ₽16 000 · 50 мл</strong>
+                  <button type="button" class="view-btn">Смотреть аромат</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="fragrance-card reveal" data-fragrance="midnight-oud" data-color="#8d6d49" data-accent="#b9a686" data-image="assets/perfumes/midnight-oud.png" tabindex="0">
+              <div class="card-visual oud-visual">
+                <img class="fragrance-bottle" src="assets/perfumes/midnight-oud.png" alt="Флакон аромата Midnight Oud" loading="lazy" decoding="async" />
+              </div>
+              <div class="card-body">
+                <div class="card-meta">
+                  <span>04</span>
+                  <span>Древесные</span>
+                </div>
+                <h3>MIDNIGHT OUD</h3>
+                <p>Дымная древесина, incense и кожа с глубокой, кинематографичной развязкой.</p>
+                <ul>
+                  <li>Уд</li>
+                  <li>Шафран</li>
+                  <li>Кожа</li>
+                </ul>
+                <div class="card-bottom">
+                  <strong class="collection-price">от ₽21 000 · 50 мл</strong>
+                  <button type="button" class="view-btn">Смотреть аромат</button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="composition" id="composition">
+          <div class="composition-top reveal">
+            <div>
+              <p class="eyebrow">Индивидуальный состав</p>
+              <h2>Три ноты, разворачивающиеся как музыка.</h2>
+            </div>
+            <p class="brief">
+              Аромат начинается с яркости, раскрывается в мягкой шелковистости и завершает путь тёплым, долгим шлейфом.
+            </p>
+          </div>
+
+          <div class="composition-stage">
+            <div class="stage-visual reveal" data-fragrance="amber-noir">
+              <img class="composition-bottle" id="compositionBottle" src="assets/perfumes/amber-noir.png" alt="Флакон аромата Amber Noir" loading="lazy" decoding="async" />
+              <span class="visually-hidden" id="compositionName">AMBER NOIR</span>
+            </div>
+
+            <div class="notes-panel reveal">
+              <div class="note-group">
+                <span class="group-kicker">ВЕРХНИЕ НОТЫ</span>
+                <ul id="topNotes"></ul>
+              </div>
+              <div class="note-group">
+                <span class="group-kicker">НОТЫ СЕРДЦА</span>
+                <ul id="heartNotes"></ul>
+              </div>
+              <div class="note-group">
+                <span class="group-kicker">БАЗОВЫЕ НОТЫ</span>
+                <ul id="baseNotes"></ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="ingredient-editorial" id="ingredients">
+          <div class="ingredient-editorial-copy reveal">
+            <p class="eyebrow">Сырьё в объёме</p>
+            <h2>Природа каждого аккорда.</h2>
+            <p id="ingredientDescription" class="ingredient-description">
+              Цитрусовая искра встречается с тёплой смолой, пряностями и мягкой древесиной.
+            </p>
+            <div class="ingredient-note-groups" aria-label="Ноты выбранного аромата">
+              <div class="ingredient-note-group">
+                <span>ВЕРХ</span>
+                <ul id="ingredientTopNotes"></ul>
+              </div>
+              <div class="ingredient-note-group">
+                <span>СЕРДЦЕ</span>
+                <ul id="ingredientHeartNotes"></ul>
+              </div>
+              <div class="ingredient-note-group">
+                <span>ШЛЕЙФ</span>
+                <ul id="ingredientBaseNotes"></ul>
+              </div>
+            </div>
+          </div>
+          <div class="ingredient-stage-wrap reveal">
+            <div class="ingredient-stage" id="ingredientStage" data-fragrance="amber-noir" aria-label="Интерактивная 3D-композиция ингредиентов">
+              <img class="ingredient-fallback" id="ingredientFallback" src="assets/perfumes/amber-noir.png" alt="Флакон аромата Amber Noir" loading="lazy" decoding="async" />
+              <span class="ingredient-stage-label">ÉCLAT · ОБЪЕКТЫ КОМПОЗИЦИИ</span>
+            </div>
+            <p class="ingredient-hint">Перетаскивайте мышью или пальцем по горизонтали и вертикали; для прокрутки страницы проведите рядом.</p>
+          </div>
+        </section>
+
+        <section class="philosophy" id="philosophy">
+          <section class="philosophy-chapter philosophy-lifestyle" id="lifestyle" aria-labelledby="lifestyle-title">
+            <div class="philosophy-chapter-copy philosophy-lifestyle-copy editorial-reveal">
+              <p class="philosophy-index">01 <span>L'ART DE VIVRE</span></p>
+              <h3 id="lifestyle-title">Образ жизни <em>ÉCLAT</em></h3>
+              <p>
+                Париж для нас — это свет, который задерживается на известняке, отблеск в старом стекле и тишина комнаты перед музыкой.
+              </p>
+              <p>
+                Искусство жить красиво — замечать больше, выбирать точнее и оставлять в пространстве место для прекрасного.
+              </p>
+              <div class="philosophy-lifestyle-signature">
+                <span>UNE CERTAINE IDÉE DU BEAU</span>
+                <span>PARIS, À TOUTE HEURE</span>
+              </div>
+            </div>
+            <figure class="philosophy-lifestyle-visual editorial-reveal">
+              <img
+                class="lifestyle-photo"
+                src="assets/paris-window.jpg"
+                alt="Вечерняя Эйфелева башня в окне парижской квартиры"
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption><span>RUE DE SEINE · PARIS</span><span>LUMIÈRE / MATIÈRE / TEMPS</span></figcaption>
+            </figure>
+          </section>
+
+          <article class="philosophy-chapter philosophy-craft">
+            <figure class="philosophy-craft-visual editorial-reveal">
+              <img
+                src="assets/perfumes/candidate-3.jpg"
+                alt="Стеклянные флаконы и ручной атомайзер в парфюмерной мастерской"
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption><span>ВРЕМЯ · ТОЧНОСТЬ · РАВНОВЕСИЕ</span><span>LE GESTE DU PARFUMEUR</span></figcaption>
+            </figure>
+            <div class="philosophy-chapter-copy editorial-reveal">
+              <p class="philosophy-index">02 <span>ВНИМАНИЕ К ДЕТАЛЯМ</span></p>
+              <h3>Медленное мастерство</h3>
+              <p>
+                Хорошая композиция не терпит спешки. Мы возвращаемся к каждому аккорду, слушаем, как он меняется, и убираем всё лишнее — пока верхние ноты, сердце и шлейф не начинают звучать как одно целое.
+              </p>
+              <p class="philosophy-side-note">Не ускорять момент. Дать ему раскрыться.</p>
+            </div>
+          </article>
+
+          <article class="philosophy-chapter philosophy-quiet">
+            <div class="philosophy-quiet-copy editorial-reveal">
+              <p class="philosophy-index">03 <span>ЭСТЕТИКА ÉCLAT</span></p>
+              <h3>Тихая роскошь</h3>
+              <p>
+                Роскошь может быть негромкой: в чистой линии флакона, мягком свете на стекле и детали, которую замечаешь не сразу. Остаётся только то, что действительно важно.
+              </p>
+              <blockquote>«Настоящий след не просит внимания — его помнят».</blockquote>
+              <span class="quote-attribution">ÉCLAT · THE ART OF SCENT</span>
+            </div>
+            <figure class="philosophy-quiet-visual editorial-reveal">
+              <span class="quiet-bottle-light" aria-hidden="true"></span>
+              <span class="quiet-light-beam" aria-hidden="true"></span>
+              <span class="quiet-glass quiet-glass-orb" aria-hidden="true"></span>
+              <span class="quiet-glass quiet-glass-lens" aria-hidden="true"></span>
+              <span class="quiet-glass quiet-glass-shard" aria-hidden="true"></span>
+              <div
+                class="philosophy-bottle quiet-bottle"
+                data-fragrance="amber-noir"
+                aria-label="Интерактивная 3D-модель флакона ÉCLAT"
+              >
+                <img
+                  class="bottle-photo"
+                  src="assets/perfumes/amber-noir.png"
+                  alt="Флакон ÉCLAT Amber Noir"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <figcaption><span class="quiet-visual-name">AMBER NOIR</span><span>PARIS · EAU DE PARFUM</span></figcaption>
+            </figure>
+          </article>
+
+          <div class="philosophy-finale editorial-reveal">
+            <p class="eyebrow">ÉCLAT · ОТКРЫТАЯ ИСТОРИЯ</p>
+            <h3>Аромат остаётся,<br /><em>даже когда момент проходит.</em></h3>
+            <a class="primary-btn" href="#collection">Открыть коллекцию <span aria-hidden="true">↗</span></a>
+          </div>
+        </section>
+
+        <section class="boutique" id="boutique">
+          <div class="section-heading reveal">
+            <p class="eyebrow">Бутик</p>
+            <h2>Выберите свой фирменный аромат.</h2>
+          </div>
+
+          <div class="shop-layout">
+            <div class="shop-grid">
+              <article class="shop-card reveal" data-name="Amber Noir" data-price="18000" data-id="amber-noir" data-tint="#d97832" data-image="assets/perfumes/amber-noir.png">
+                <div class="shop-card-visual amber-visual"><img class="shop-bottle" src="assets/perfumes/amber-noir.png" alt="Флакон Amber Noir" loading="lazy" decoding="async" /></div>
+                <div class="shop-card-copy">
+                  <div class="shop-title-row">
+                    <h3>Amber Noir</h3>
+                    <span class="shop-price">18 000 ₽</span>
+                  </div>
+                  <p>Сияющая тёплая древесная signature.</p>
+                  <div class="shop-actions">
+                    <label>
+                      <span>Объём</span>
+                      <select>
+                        <option value="50">50 мл</option>
+                        <option value="100">100 мл</option>
+                      </select>
+                    </label>
+                    <button type="button" class="add-cart">В корзину</button>
+                  </div>
+                </div>
+              </article>
+
+              <article class="shop-card reveal" data-name="Velvet Bloom" data-price="17000" data-id="velvet-bloom" data-tint="#dca985" data-image="assets/perfumes/velvet-bloom.png">
+                <div class="shop-card-visual blush-visual"><img class="shop-bottle" src="assets/perfumes/velvet-bloom.png" alt="Флакон Velvet Bloom" loading="lazy" decoding="async" /></div>
+                <div class="shop-card-copy">
+                  <div class="shop-title-row">
+                    <h3>Velvet Bloom</h3>
+                    <span class="shop-price">17 000 ₽</span>
+                  </div>
+                  <p>Пышные лепестки и бархатистая мягкость.</p>
+                  <div class="shop-actions">
+                    <label>
+                      <span>Объём</span>
+                      <select>
+                        <option value="50">50 мл</option>
+                        <option value="100">100 мл</option>
+                      </select>
+                    </label>
+                    <button type="button" class="add-cart">В корзину</button>
+                  </div>
+                </div>
+              </article>
+
+              <article class="shop-card reveal" data-name="Citrus Ombre" data-price="16000" data-id="citrus-ombre" data-tint="#d8a24a" data-image="assets/perfumes/citrus-ombre.png">
+                <div class="shop-card-visual citrus-visual"><img class="shop-bottle" src="assets/perfumes/citrus-ombre.png" alt="Флакон Citrus Ombre" loading="lazy" decoding="async" /></div>
+                <div class="shop-card-copy">
+                  <div class="shop-title-row">
+                    <h3>Citrus Ombre</h3>
+                    <span class="shop-price">16 000 ₽</span>
+                  </div>
+                  <p>Пятно бергамота и свежая цедра на солнце.</p>
+                  <div class="shop-actions">
+                    <label>
+                      <span>Объём</span>
+                      <select>
+                        <option value="50">50 мл</option>
+                        <option value="100">100 мл</option>
+                      </select>
+                    </label>
+                    <button type="button" class="add-cart">В корзину</button>
+                  </div>
+                </div>
+              </article>
+
+              <article class="shop-card reveal" data-name="Midnight Oud" data-price="21000" data-id="midnight-oud" data-tint="#8d6d49" data-image="assets/perfumes/midnight-oud.png">
+                <div class="shop-card-visual oud-visual"><img class="shop-bottle" src="assets/perfumes/midnight-oud.png" alt="Флакон Midnight Oud" loading="lazy" decoding="async" /></div>
+                <div class="shop-card-copy">
+                  <div class="shop-title-row">
+                    <h3>Midnight Oud</h3>
+                    <span class="shop-price">21 000 ₽</span>
+                  </div>
+                  <p>Дымная пелена древесных аккордов и кожи.</p>
+                  <div class="shop-actions">
+                    <label>
+                      <span>Объём</span>
+                      <select>
+                        <option value="50">50 мл</option>
+                        <option value="100">100 мл</option>
+                      </select>
+                    </label>
+                    <button type="button" class="add-cart">В корзину</button>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <aside class="cart-panel" id="cartPanel" aria-live="polite">
+              <div class="cart-header">
+                <div>
+                  <p class="eyebrow">Корзина</p>
+                  <h3>Ваш выбор</h3>
+                </div>
+                <button class="close-cart" type="button" aria-label="Закрыть корзину">Закрыть</button>
+              </div>
+
+              <div class="cart-items"></div>
+
+              <div class="cart-summary">
+                <div class="summary-row">
+                  <span>Сумма</span>
+                  <strong id="subtotal">0 ₽</strong>
+                </div>
+                <div class="summary-row">
+                  <span>Доставка</span>
+                  <strong id="shipping">0 ₽</strong>
+                </div>
+                <div class="summary-row total-row">
+                  <span>Итого</span>
+                  <strong id="total">0 ₽</strong>
+                </div>
+              </div>
+
+              <button class="checkout-btn" type="button">Оформить заказ</button>
+            </aside>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div class="footer-brand">
+          <span class="brand-logo">É</span>
+          <div>
+            <span class="brand-word">ÉCLAT</span>
+            <small>The Art of Scent</small>
+          </div>
+        </div>
+
+        <nav class="footer-nav" aria-label="Навигация в подвале">
+          <a href="#collection">Коллекция</a>
+          <a href="#composition">Состав</a>
+          <a href="#ingredients">Ингредиенты</a>
+          <a href="#philosophy">Философия</a>
+          <a href="#boutique">Бутик</a>
+        </nav>
+
+        <div class="footer-meta">
+          <a href="mailto:hello@eclat.fr">hello@eclat.fr</a>
+          <a href="tel:+33123456789">+33 (0)1 23 45 67 89</a>
+          <div class="social-links">
+            <a href="#" aria-label="Instagram">Instagram</a>
+            <a href="#" aria-label="Pinterest">Pinterest</a>
+            <a href="#" aria-label="Newsletter">Newsletter</a>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <span>© 2026 ÉCLAT</span>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Image processing</title>
+    <style>
+      body { font: 16px sans-serif; background: #111; color: #eee; }
+      img { max-width: 20rem; max-height: 30rem; }
+      #results { display: flex; gap: 1rem; flex-wrap: wrap; }
+    </style>
+  </head>
+  <body>
+    <p id="status">Preparing image processing…</p>
+    <div id="results"></div>
+    <script type="module">
+      import { removeBackground } from "https://esm.sh/@imgly/background-removal@1.4.5?bundle";
+
+      const status = document.getElementById("status");
+      const result = document.getElementById("results");
+      const images = [["midnight-oud", "midnight-oud-source-new.png"]];
+
+      for (const [name, file] of images) {
+        status.textContent = `Processing ${name}…`;
+        const source = await fetch(`./${file}`).then((response) => response.blob());
+        const blob = await removeBackground(source, {
+          model: "medium",
+          output: { format: "image/png", quality: 1 },
+        });
+        const url = URL.createObjectURL(blob);
+        const image = new Image();
+        image.src = url;
+        image.alt = name;
+        result.append(image);
+        const download = document.createElement("a");
+        download.href = url;
+        download.download = `${name}-cutout.png`;
+        download.textContent = `Download ${name}`;
+        result.append(download);
+      }
+
+      status.textContent = "All bottles processed.";
+    </script>
+  </body>
+</html>
